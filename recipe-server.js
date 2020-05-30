@@ -176,7 +176,7 @@ app.get('/recipe_news',(req,res)=>{
     var url="http://newssearch.naver.com/search.naver?where=rss&query="+query;
     // xml을 JSON으로 변경하는 파서기
     var parser=new xml2js.Parser({
-
+        explicitArray:false
     })
     request({url:url},(err,request,xml)=>{
         parser.parseString(xml,function(err,pJson){
