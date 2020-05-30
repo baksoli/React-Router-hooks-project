@@ -14,6 +14,12 @@ listen() 이용시 위에 bind~accept 까지 구동
 app.listen(3355,()=>{
     console.log("Server Start...","http://localhost:3355")
 })
+// 서버 port 충돌 방지
+app.all('/*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+});
 // 클라이언트와 통신
 // 사용자(클라이언트)의 URI를 받아온다.
 
@@ -65,4 +71,18 @@ app.get('/recipe',(request,response)=>{
 
     })
 
+})
+
+// SELECT CEIL(COUNT(*)/12.0 FROM recipe
+app.get('/recipe_total', (request,response)=>{
+    var url="mongodb://211.238.142.181:27017"
+    Client.connect(url,(err,client)=>{
+        var db=client.db("mydb");
+        // count 함수는 리턴함수를 가지고 있기 때문에 return count; 를 해줘야한다.
+        db.collection('recipe').find({}).count((err,count)=>{
+            response.json({total:Math.ceil(count/12.0)})
+            client.close();
+            return count;
+        })
+    })
 })
